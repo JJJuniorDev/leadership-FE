@@ -1,0 +1,39 @@
+<p>home works!</p>
+<h1>📑 Gestione Contratti</h1>
+
+<form (ngSubmit)="uploadContract()" class="upload-form">
+  <label>Tipo contratto:</label>
+  <select [(ngModel)]="contractType" name="contractType" required>
+    <option value="">-- Seleziona --</option>
+    <option *ngFor="let type of contractTypes" [value]="type">{{ type }}</option>
+  </select>
+
+  <label>File contratto (PDF/DOCX/TXT):</label>
+  <input type="file" (change)="onFileSelected($event)" required />
+
+  <button type="submit">Carica contratto</button>
+</form>
+
+<hr />
+
+<h2>Contratti caricati</h2>
+<table>
+  <thead>
+    <tr>
+      <th>File</th>
+      <th>Tipo</th>
+      <th>Stato</th>
+      <th>Data upload</th>
+      <th>Importo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of contracts">
+      <td>{{ c.fileName }}</td>
+      <td>{{ c.contractType }}</td>
+      <td>{{ c.status }}</td>
+      <td>{{ c.uploadDate | date:'short' }}</td>
+      <td>{{ c.totalAmount || '-' }}</td>
+    </tr>
+  </tbody>
+</table>
