@@ -1,0 +1,216 @@
+<!-- onboarding.component.html -->
+<div class="onboarding-container">
+  <div class="onboarding-header">
+    <h1>Benvenuto in Leadership Pulse! 🚀</h1>
+    <p>Personalizziamo il tuo percorso di sviluppo</p>
+    
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div *ngFor="let step of [1,2,3,4]" 
+           [class]="getStepClass(step)"
+           class="step-indicator">
+        <span class="step-number">{{ step }}</span>
+        <span class="step-label">{{ getStepLabel(step) }}</span>
+      </div>
+    </div>
+  </div>
+ <form [formGroup]="onboardingForm">
+  <!-- Step 1: Context -->
+  <div *ngIf="currentStep === 1" class="step-content">
+    <h2>Raccontaci del tuo ruolo</h2>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Il Tuo Ruolo di Leadership *</label>
+        <select formControlName="leadershipRole" 
+                [class.error]="onboardingForm.get('leadershipRole')?.invalid && onboardingForm.get('leadershipRole')?.touched">
+          <option value="">Seleziona il tuo ruolo</option>
+          <option value="TEAM_LEAD">Team Lead</option>
+          <option value="MANAGER">Manager</option>
+          <option value="SENIOR_MANAGER">Senior Manager</option>
+          <option value="DIRECTOR">Director</option>
+          <option value="EXECUTIVE">Executive</option>
+          <option value="ENTREPRENEUR">Imprenditore</option>
+        </select>
+        <div *ngIf="onboardingForm.get('leadershipRole')?.invalid && onboardingForm.get('leadershipRole')?.touched" 
+             class="error-message">
+          Seleziona il tuo ruolo di leadership
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dimensione Team *</label>
+        <select formControlName="teamSize" 
+                [class.error]="onboardingForm.get('teamSize')?.invalid && onboardingForm.get('teamSize')?.touched">
+          <option value="">Seleziona dimensione team</option>
+          <option value="1">Solo io</option>
+          <option value="2-5">2-5 persone</option>
+          <option value="6-10">6-10 persone</option>
+          <option value="11-20">11-20 persone</option>
+          <option value="21-50">21-50 persone</option>
+          <option value="50+">50+ persone</option>
+        </select>
+        <div *ngIf="onboardingForm.get('teamSize')?.invalid && onboardingForm.get('teamSize')?.touched" 
+             class="error-message">
+          Seleziona la dimensione del tuo team
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Anni di Esperienza *</label>
+        <select formControlName="yearsOfExperience">
+          <option value="">Seleziona esperienza</option>
+          <option value="0-2">0-2 anni</option>
+          <option value="3-5">3-5 anni</option>
+          <option value="6-10">6-10 anni</option>
+          <option value="10+">10+ anni</option>
+        </select>
+      </div>
+
+      <div class="form-group full-width">
+        <label>Azienda/Organizzazione *</label>
+        <input type="text" formControlName="company" placeholder="Dove lavori?">
+        <div *ngIf="onboardingForm.get('company')?.invalid && onboardingForm.get('company')?.touched" 
+             class="error-message">
+          Inserisci il nome della tua azienda
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Challenges -->
+  <div *ngIf="currentStep === 2" class="step-content">
+    <h2>Quali sono le tue principali sfide?</h2>
+    <p class="step-description">Seleziona tutte quelle che si applicano alla tua situazione attuale</p>
+    
+    <div class="challenges-grid">
+      <div *ngFor="let challenge of availableChallenges" 
+           class="challenge-card"
+           [class.selected]="isChallengeSelected(challenge)"
+           (click)="toggleChallenge(challenge)">
+        <div class="challenge-checkbox">
+          {{ isChallengeSelected(challenge) ? '✓' : '' }}
+        </div>
+        <span class="challenge-text">{{ challenge }}</span>
+      </div>
+    </div>
+    
+    <div *ngIf="challengesArray.length > 0" class="selected-count">
+      {{ challengesArray.length }} sfida(e) selezionata(e)
+    </div>
+    <div *ngIf="challengesArray.length === 0 && onboardingForm.get('identifiedChallenges')?.touched" 
+         class="error-message">
+      Seleziona almeno una sfida
+    </div>
+  </div>
+
+  <!-- Step 3: Leadership Path -->
+  <div *ngIf="currentStep === 3" class="step-content">
+    <h2>Scegli la tua area di focus</h2>
+    <p class="step-description">Seleziona la competenza di leadership che vuoi sviluppare per prima</p>
+    
+    <div *ngIf="loading" class="loading-paths">
+      <div class="loading-spinner"></div>
+      <span>Caricamento percorsi leadership...</span>
+    </div>
+    
+    <div class="paths-grid" *ngIf="!loading">
+      <div *ngFor="let path of leadershipPaths" 
+           class="path-card"
+           [class.selected]="onboardingForm.get('primaryLeadershipPath')?.value === path.path"
+           (click)="onboardingForm.get('primaryLeadershipPath')?.setValue(path.path)">
+        
+        <div class="path-header">
+          <h3>{{ path.displayName }}</h3>
+        </div>
+        
+        <p class="path-description">{{ path.description }}</p>
+        
+        <div class="path-features">
+          <div class="feature">
+            <strong>Domande Giornaliere:</strong>
+            <ul>
+              <li *ngFor="let question of path.dailyQuestions">{{ question }}</li>
+            </ul>
+          </div>
+          
+          <div class="feature">
+            <strong>Competenze Principali:</strong>
+            <div class="skills-tags">
+              <span *ngFor="let skill of path.coreSkills" class="skill-tag">
+                {{ skill.replace('_', ' ') }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="path-selection-indicator">
+          {{ onboardingForm.get('primaryLeadershipPath')?.value === path.path ? '✓ Selezionato' : 'Seleziona' }}
+        </div>
+      </div>
+    </div>
+    
+    <div *ngIf="!loading && leadershipPaths.length === 0" class="empty-paths">
+      <p>Nessun percorso leadership disponibile al momento.</p>
+    </div>
+  </div>
+
+  <!-- Step 4: Custom Goal -->
+  <div *ngIf="currentStep === 4" class="step-content">
+    <h2>Imposta il tuo obiettivo personale</h2>
+    
+    <div *ngIf="getSelectedPath()" class="selected-path-preview">
+      <h3>Il tuo percorso selezionato: {{ getSelectedPath()?.displayName }}</h3>
+      <p>Creeremo un obiettivo di 3 mesi focalizzato su {{ getSelectedPath()?.displayName }}</p>
+    </div>
+    
+    <div class="form-group full-width">
+      <label>Obiettivo Personale (Opzionale)</label>
+      <textarea formControlName="customGoal" 
+                placeholder="Aggiungi qualsiasi obiettivo personale specifico o contesto... (es. 'Voglio migliorare le riunioni di team', 'Ho bisogno di un migliore work-life balance')"
+                rows="4"></textarea>
+      <small>Questo ci aiuterà a personalizzare ulteriormente la tua esperienza</small>
+    </div>
+    
+    <div class="onboarding-summary">
+      <h4>Riepilogo</h4>
+      <div class="summary-item">
+        <strong>Ruolo:</strong> {{ onboardingForm.get('leadershipRole')?.value || 'Non impostato' }}
+      </div>
+      <div class="summary-item">
+        <strong>Dimensione Team:</strong> {{ onboardingForm.get('teamSize')?.value || 'Non impostato' }}
+      </div>
+      <div class="summary-item">
+        <strong>Sfide:</strong> {{ challengesArray.length }} selezionate
+      </div>
+      <div class="summary-item">
+        <strong>Area di Focus:</strong> {{ getSelectedPath()?.displayName || 'Non selezionato' }}
+      </div>
+    </div>
+  </div>
+</form>
+  <!-- Navigation Actions -->
+  <div class="onboarding-actions">
+    <button class="btn-secondary" 
+            *ngIf="currentStep > 1" 
+            (click)="previousStep()"
+            [disabled]="loading">
+      Indietro
+    </button>
+    
+    <button class="btn-primary" 
+            *ngIf="currentStep < totalSteps" 
+            (click)="nextStep()" 
+            [disabled]="!isStepValid(currentStep) || loading">
+      Continua
+    </button>
+    
+    <button class="btn-primary" 
+            *ngIf="currentStep === totalSteps" 
+            (click)="completeOnboarding()"
+            [disabled]="!onboardingForm.valid || loading">
+      <span *ngIf="loading" class="loading-spinner-small"></span>
+      {{ loading ? 'Completamento...' : 'Completa Setup & Inizia il Percorso' }}
+    </button>
+  </div>
+</div>

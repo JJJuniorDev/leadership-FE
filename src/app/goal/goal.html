@@ -1,0 +1,105 @@
+
+<!-- goal.html -->
+<div class="goals-container">
+  <div class="goals-header">
+    <h1>I Tuoi Goal di Leadership 🎯</h1>
+    <p>Monitora i tuoi obiettivi di sviluppo personale e professionale</p>
+    
+    <div class="header-actions">
+      <button class="btn-primary" routerLink="/goals/new">
+        ＋ Nuovo Goal
+      </button>
+      <button class="btn-secondary" (click)="refreshGoals()" [disabled]="loading">
+        🔄 Aggiorna
+      </button>
+    </div>
+  </div>
+
+  <!-- Stato di caricamento -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Caricamento goal...</span>
+  </div>
+
+  <!-- Errore -->
+  <div *ngIf="error && !loading" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button class="btn-primary" (click)="refreshGoals()">Riprova</button>
+  </div>
+
+  <!-- Nessun goal -->
+  <div *ngIf="!loading && !error && activeGoals.length === 0" class="empty-state">
+    <div class="empty-icon">🎯</div>
+    <h3>Nessun goal attivo</h3>
+    <p>Inizia creando il tuo primo goal di leadership!</p>
+    <button class="btn-primary" routerLink="/goals/new">
+      Crea il Primo Goal
+    </button>
+  </div>
+
+  <!-- Lista goal -->
+  <div *ngIf="!loading && activeGoals.length > 0" class="goals-grid">
+    <div *ngFor="let goal of activeGoals" class="goal-card">
+      <div class="goal-header">
+        <div class="goal-category">
+          <span class="category-badge">{{ getCategoryDisplayName(goal.category) }}</span>
+          <span class="status-badge" [class]="goal.status.toLowerCase()">
+            {{ getStatusDisplayName(goal.status) }}
+          </span>
+        </div>
+        <div class="goal-actions">
+          <button class="btn-icon" title="Modifica">✏️</button>
+        </div>
+      </div>
+
+      <div class="goal-content">
+        <h3 class="goal-title">{{ goal.title }}</h3>
+        <p class="goal-description" *ngIf="goal.description">{{ goal.description }}</p>
+        
+        <div class="goal-dates">
+          <div class="date-info">
+            <strong>Inizio:</strong> {{ goal.startDate | date:'dd/MM/yyyy' }}
+          </div>
+          <div class="date-info" [class.overdue]="isOverdue(goal.targetDate)">
+            <strong>Scadenza:</strong> {{ goal.targetDate | date:'dd/MM/yyyy' }}
+            <span *ngIf="isOverdue(goal.targetDate)" class="overdue-label">⚠️ In ritardo</span>
+            <span *ngIf="!isOverdue(goal.targetDate)" class="days-remaining">
+              ({{ getDaysRemaining(goal.targetDate) }} giorni rimanenti)
+            </span>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+          <div class="progress-header">
+            <span>Progresso</span>
+            <span class="progress-percentage">{{ goal.currentProgress }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="goal.currentProgress"
+                 [class]="getProgressColor(goal.currentProgress)"></div>
+          </div>
+        </div>
+
+        <!-- Note di progresso -->
+        <div *ngIf="goal.progressNotes" class="progress-notes">
+          <strong>Note:</strong> {{ goal.progressNotes }}
+        </div>
+      </div>
+
+      <div class="goal-footer">
+        <div class="goal-meta">
+          <small>Creato il {{ goal.createdAt | date:'dd/MM/yyyy' }}</small>
+          <small *ngIf="goal.updatedAt !== goal.createdAt">
+            Aggiornato il {{ goal.updatedAt | date:'dd/MM/yyyy' }}
+          </small>
+        </div>
+        <button class="btn-outline" routerLink="/daily-pulse">
+          📝 Riflessione Giornaliera
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

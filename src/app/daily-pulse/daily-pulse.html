@@ -1,0 +1,152 @@
+<!-- daily-pulse.component.html -->
+<div class="pulse-container">
+  <div class="pulse-header">
+    <h1>Riflessione Giornaliera 📝</h1>
+    
+    <div *ngIf="currentPulse" class="pulse-info">
+      <span class="category-badge">{{ getCategoryDisplayName(currentPulse.goalCategory) }}</span>
+      <span class="pulse-counter">Pagina {{ currentPage }} di {{ totalPages }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading && availablePulses.length === 0" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Caricamento domande...</span>
+  </div>
+
+  <div *ngIf="!loading && availablePulses.length === 0" class="empty-state">
+    <p>Nessuna domanda disponibile al momento.</p>
+    <button class="btn-primary" (click)="loadRandomPulses()">Ricarica</button>
+  </div>
+
+  <form *ngIf="currentPulse && !loading" 
+        [formGroup]="pulseForm" 
+        (ngSubmit)="onSubmit()" 
+        class="pulse-form">
+    
+    <!-- PAGINA 1: METRICHE E MOOD -->
+    <div *ngIf="currentPage === 1" class="page-container">
+      <div class="page-header">
+        <h2>Come ti senti oggi?</h2>
+        <p>Valuta il tuo stato attuale</p>
+      </div>
+
+      <!-- Metriche -->
+      <div class="metrics-grid">
+        <div class="metric-group">
+          <label>Energia (1-10)</label>
+          <input type="number" formControlName="energyLevel" min="1" max="10">
+          <div class="metric-bar">
+            <div [style.width.%]="pulseForm.get('energyLevel')?.value * 10" 
+                 class="metric-fill"></div>
+          </div>
+        </div>
+        
+        <div class="metric-group">
+          <label>Concentrazione (1-10)</label>
+          <input type="number" formControlName="focusLevel" min="1" max="10">
+          <div class="metric-bar">
+            <div [style.width.%]="pulseForm.get('focusLevel')?.value * 10" 
+                 class="metric-fill"></div>
+          </div>
+        </div>
+        
+        <div class="metric-group">
+          <label>Team Connection (1-10)</label>
+          <input type="number" formControlName="teamConnectionLevel" min="1" max="10">
+          <div class="metric-bar">
+            <div [style.width.%]="pulseForm.get('teamConnectionLevel')?.value * 10" 
+                 class="metric-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mood -->
+      <div class="mood-group">
+        <label>Stato d'animo</label>
+        <select formControlName="dailyMood">
+          <option value="ECCELLENTE">😊 Eccellente</option>
+          <option value="BUONO">🙂 Buono</option>
+          <option value="NEUTRO">😐 Neutro</option>
+          <option value="BASSO">😔 Basso</option>
+          <option value="STRESSATO">😥 Stressato</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- PAGINA 2: PRIMA DOMANDA -->
+    <div *ngIf="currentPage === 2" class="page-container">
+      <div class="page-header">
+        <h2>Riflessione Personale</h2>
+        <p>Cosa hai imparato oggi?</p>
+      </div>
+
+      <div class="question-group">
+        <h3>{{ currentPulse.whatILearned }}</h3>
+        <textarea formControlName="whatILearnedResponse" 
+                  placeholder="Scrivi la tua risposta qui..."
+                  rows="5"></textarea>
+      </div>
+    </div>
+
+    <!-- PAGINA 3: SECONDA DOMANDA -->
+    <div *ngIf="currentPage === 3" class="page-container">
+      <div class="page-header">
+        <h2>Impatto sul Team</h2>
+        <p>Come hai ispirato gli altri?</p>
+      </div>
+
+      <div class="question-group">
+        <h3>{{ currentPulse.howIInspired }}</h3>
+        <textarea formControlName="howIInspiredResponse" 
+                  placeholder="Scrivi la tua risposta qui..."
+                  rows="5"></textarea>
+      </div>
+    </div>
+
+    <!-- PAGINA 4: TERZA DOMANDA -->
+    <div *ngIf="currentPage === 4" class="page-container">
+      <div class="page-header">
+        <h2>Opportunità di Miglioramento</h2>
+        <p>Dove puoi crescere?</p>
+      </div>
+
+      <div class="question-group">
+        <h3>{{ currentPulse.whereToImprove }}</h3>
+        <textarea formControlName="whereToImproveResponse" 
+                  placeholder="Scrivi la tua risposta qui..."
+                  rows="5"></textarea>
+      </div>
+    </div>
+
+    <!-- Navigazione e Azioni -->
+    <div class="form-actions">
+      <div class="navigation-buttons">
+        <button type="button" class="btn-secondary" 
+                (click)="previousPage()" 
+                [disabled]="currentPage === 1">
+          ← Indietro
+        </button>
+        
+        <button *ngIf="currentPage < totalPages" 
+                type="button" class="btn-primary" 
+                (click)="nextPage()" 
+                [disabled]="!isCurrentPageValid()">
+          Avanti →
+        </button>
+      </div>
+      
+      <div class="submit-buttons">
+        <button type="button" class="btn-secondary" routerLink="/dashboard">
+          Annulla
+        </button>
+        <button *ngIf="currentPage === totalPages" 
+                type="submit" class="btn-primary" 
+                [disabled]="!pulseForm.valid || loading">
+          <span *ngIf="loading" class="loading-spinner"></span>
+          {{ loading ? 'Salvando...' : 'Salva Riflessione' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

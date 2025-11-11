@@ -1,0 +1,269 @@
+<div class="dashboard-container" *ngIf="user; else noUser">
+  
+  <!-- Intestazione -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="welcome-section">
+        <h1>{{ getGreeting() }}, Lorenzo{{ user!.firstName }}! 👋</h1>
+        <p class="subtitle">Ecco i tuoi progressi di leadership oggi</p>
+      </div>
+      <div class="user-info">
+        <div class="user-avatar">
+          {{ user?.firstName?.charAt(0) }}{{ user!.lastName?.charAt(0) }}
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ user!.firstName }} {{ user!.lastName }}</span>
+          <span class="user-role">{{ user!.leadershipRole }} • {{ user!.company }}</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Panoramica Statistiche -->
+  <section class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-content">
+          <h3>{{ stats.totalPulses }}</h3>
+          <p>Pulse Recenti</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-content">
+          <h3>{{ stats.completedGoals }}/{{ activeGoals.length }}</h3>
+          <p>Obiettivi Completati</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-content">
+          <h3>{{ stats.activeImprovements }}</h3>
+          <p>Miglioramenti Attivi</p>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-content">
+          <h3>{{ stats.weeklyScore }}/10</h3>
+          <p>Punteggio Settimanale</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Griglia Contenuto Principale -->
+  <div class="dashboard-grid">
+    
+    <!-- Pulse Giornalieri Recenti -->
+    <section class="dashboard-card recent-pulses">
+      <div class="card-header">
+        <h2>Pulse Giornalieri Recenti</h2>
+        <button class="btn-view-all" routerLink="/daily-pulses">Vedi Tutti</button>
+      </div>
+      
+      <div class="card-content">
+        <div *ngIf="loading.all" class="loading-state">
+          <div class="loading-spinner"></div>
+          <span>Caricamento pulse...</span>
+        </div>
+        
+        <div *ngIf="!loading.all && recentPulses.length === 0" class="empty-state">
+          <div class="empty-icon">📝</div>
+          <p>Nessun pulse recente</p>
+          <button class="btn-primary" routerLink="/daily-pulses/new">Aggiungi il Tuo Primo Pulse</button>
+        </div>
+        
+        <div *ngIf="!loading.all && recentPulses.length > 0" class="pulses-list">
+          <div *ngFor="let pulse of recentPulses" class="pulse-item">
+            <div class="pulse-header">
+              <span class="pulse-date">{{ pulse.pulseDate | date:'d MMM' }}</span>
+              <span class="pulse-mood">{{ getMoodEmoji(pulse.dailyMood) }}</span>
+            </div>
+            <div class="pulse-metrics">
+              <div class="metric">
+                <span class="metric-label">Energia</span>
+                <div class="metric-bar">
+                  <div class="metric-fill" [style.width.%]="pulse.energyLevel * 10"></div>
+                </div>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Concentrazione</span>
+                <div class="metric-bar">
+                  <div class="metric-fill" [style.width.%]="pulse.focusLevel * 10"></div>
+                </div>
+              </div>
+            </div>
+            <p class="pulse-insight" *ngIf="pulse.whatILearned">
+              {{ pulse.whatILearned }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Obiettivi Attivi -->
+    <section class="dashboard-card active-goals">
+      <div class="card-header">
+        <h2>Obiettivi di Leadership</h2>
+        <button class="btn-view-all" routerLink="/goals">Vedi Tutti</button>
+      </div>
+      
+      <div class="card-content">
+        <div *ngIf="loading.all" class="loading-state">
+          <div class="loading-spinner"></div>
+          <span>Caricamento obiettivi...</span>
+        </div>
+        
+        <div *ngIf="!loading.all && activeGoals.length === 0" class="empty-state">
+          <div class="empty-icon">🎯</div>
+          <p>Nessun obiettivo attivo</p>
+          <button class="btn-primary" routerLink="/goals/new">Imposta il Tuo Primo Obiettivo</button>
+        </div>
+        
+        <div *ngIf="!loading.all && activeGoals.length > 0" class="goals-list">
+          <div *ngFor="let goal of activeGoals" class="goal-item">
+            <div class="goal-header">
+              <h4>{{ goal.title }}</h4>
+              <span class="goal-status" [class]="goal.status.toLowerCase()">
+                {{ goal.status }}
+              </span>
+            </div>
+            <p class="goal-description">{{ goal.description }}</p>
+            <div class="goal-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getProgressPercentage(goal)"></div>
+              </div>
+              <span class="progress-text">{{ getProgressPercentage(goal) }}%</span>
+            </div>
+            <div class="goal-dates">
+              <span>Scadenza: {{ goal.targetDate | date:'d MMM y' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aree di Miglioramento -->
+    <section class="dashboard-card improvement-areas">
+      <div class="card-header">
+        <h2>Sviluppo Competenze</h2>
+        <button class="btn-view-all" routerLink="/improvements">Vedi Tutti</button>
+      </div>
+      
+      <div class="card-content">
+        <div *ngIf="loading.all" class="loading-state">
+          <div class="loading-spinner"></div>
+          <span>Caricamento miglioramenti...</span>
+        </div>
+        
+        <div *ngIf="!loading.all && activeImprovements.length === 0" class="empty-state">
+          <div class="empty-icon">📚</div>
+          <p>Nessun miglioramento attivo</p>
+          <button class="btn-primary" routerLink="/improvements/new">Aggiungi Area di Miglioramento</button>
+        </div>
+        
+        <div *ngIf="!loading.all && activeImprovements.length > 0" class="improvements-list">
+          <div *ngFor="let improvement of activeImprovements" class="improvement-item">
+            <div class="improvement-header">
+              <h4>{{ improvement.title }}</h4>
+              <span class="skill-level">
+                {{ getSkillLevelText(improvement.currentSkillLevel) }}
+              </span>
+            </div>
+            <p class="improvement-description">{{ improvement.description }}</p>
+            <div class="skill-progress">
+              <div class="progress-labels">
+                <span>Attuale: {{ improvement.currentSkillLevel }}/10</span>
+                <span>Obiettivo: {{ improvement.targetSkillLevel }}/10</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" 
+                     [style.width.%]="(improvement.currentSkillLevel / improvement.targetSkillLevel) * 100">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Riflessioni Settimanali -->
+    <section class="dashboard-card weekly-reflections">
+      <div class="card-header">
+        <h2>Insight Settimanali</h2>
+        <button class="btn-view-all" routerLink="/reflections">Vedi Tutti</button>
+      </div>
+      
+      <div class="card-content">
+        <div *ngIf="loading.all" class="loading-state">
+          <div class="loading-spinner"></div>
+          <span>Caricamento riflessioni...</span>
+        </div>
+        
+        <div *ngIf="!loading.all && recentReflections.length === 0" class="empty-state">
+          <div class="empty-icon">📅</div>
+          <p>Nessuna riflessione settimanale</p>
+          <button class="btn-primary" routerLink="/reflections/new">Inizia Riflessione</button>
+        </div>
+        
+        <div *ngIf="!loading.all && recentReflections.length > 0" class="reflections-list">
+          <div *ngFor="let reflection of recentReflections" class="reflection-item">
+            <div class="reflection-header">
+              <h4>Settimana del {{ reflection.weekStartDate | date:'d MMM' }}</h4>
+              <div class="reflection-score">
+                <span class="score">{{ stats.weeklyScore }}</span>
+                <span class="score-label">/10</span>
+              </div>
+            </div>
+            <div class="reflection-highlights">
+              <div class="highlight">
+                <strong>Risultato Principale:</strong>
+                <p>{{ reflection.biggestAchievement }}</p>
+              </div>
+              <div class="highlight">
+                <strong>Focus:</strong>
+                <p>{{ reflection.nextWeekFocus }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Azioni Rapide -->
+  <section class="quick-actions">
+    <h3>Azioni Rapide</h3>
+    <div class="actions-grid">
+      <button class="action-btn" routerLink="/daily-pulses/new">
+        <span class="action-icon">➕</span>
+        <span>Aggiungi Pulse</span>
+      </button>
+      <button class="action-btn" routerLink="/goals/new">
+        <span class="action-icon">🎯</span>
+        <span>Nuovo Obiettivo</span>
+      </button>
+      <button class="action-btn" (click)="refreshData()">
+        <span class="action-icon">🔄</span>
+        <span>Aggiorna Dati</span>
+      </button>
+    </div>
+  </section>
+
+</div>
+
+<ng-template #noUser>
+  <div class="no-user-state">
+    <div class="no-user-content">
+      <h2>Benvenuto in Leadership Pulse! 🚀</h2>
+      <p>Accedi per accedere alla tua dashboard e iniziare a monitorare il tuo percorso di leadership.</p>
+      <button class="btn-primary" routerLink="/login">Accedi</button>
+    </div>
+  </div>
+</ng-template>

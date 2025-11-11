@@ -1,39 +1,255 @@
-<p>home works!</p>
-<h1>📑 Gestione Contratti</h1>
+<div class="app-container">
+  <!-- Header with Navigation -->
+  <header class="app-header">
+    <nav class="nav-container">
+      <div class="nav-brand">
+        <div class="logo">🎯</div>
+        <span class="brand-text">Leadership Pulse</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Funzionalità</a>
+        <a href="#benefits" class="nav-link">Vantaggi</a>
+        <a href="#testimonials" class="nav-link">Testimonianze</a>
+      </div>
+    </nav>
+    
+    <div class="header-content">
+      <div class="header-badge">🚀 PER LEADER AMBIZIOSI</div>
+      <h1 class="header-title">Daily Leadership Pulse</h1>
+      <p class="header-subtitle">Trasforma il tuo stile di leadership, 5 minuti al giorno</p>
+      <div class="header-stats">
+        <div class="stat">
+          <div class="stat-number">94%</div>
+          <div class="stat-label">Aumento produttività</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">87%</div>
+          <div class="stat-label">Miglioramento skills</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">5min</div>
+          <div class="stat-label">Al giorno</div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<form (ngSubmit)="uploadContract()" class="upload-form">
-  <label>Tipo contratto:</label>
-  <select [(ngModel)]="contractType" name="contractType" required>
-    <option value="">-- Seleziona --</option>
-    <option *ngFor="let type of contractTypes" [value]="type">{{ type }}</option>
-  </select>
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h2>La tua evoluzione leadership inizia qui</h2>
+        <p>Un sistema di riflessione quotidiana progettato per leader che vogliono fare la differenza</p>
+        <div class="hero-features">
+          <div class="hero-feature">
+            <span class="feature-icon">⏱️</span>
+            <span>Check-in di 5 minuti</span>
+          </div>
+          <div class="hero-feature">
+            <span class="feature-icon">📊</span>
+            <span>Metriche di progresso</span>
+          </div>
+          <div class="hero-feature">
+            <span class="feature-icon">🎯</span>
+            <span>Obiettivi personalizzati</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <label>File contratto (PDF/DOCX/TXT):</label>
-  <input type="file" (change)="onFileSelected($event)" required />
+    <!-- Features Grid -->
+    <section id="features" class="features-section">
+      <div class="section-header">
+        <h2>Come funziona la tua crescita</h2>
+        <p>Un percorso strutturato per lo sviluppo leadership quotidiano</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">1</div>
+          <h3>Check-in Mattutino</h3>
+          <p>Inizia la giornata con 3 domande mirate per focalizzare le tue intenzioni leadership</p>
+          <ul class="feature-list">
+            <li>Cosa voglio imparare oggi?</li>
+            <li>Come posso ispirare il mio team?</li>
+            <li>Dove posso migliorare?</li>
+          </ul>
+        </div>
 
-  <button type="submit">Carica contratto</button>
-</form>
+        <div class="feature-card">
+          <div class="feature-icon">2</div>
+          <h3>Metriche Emotive</h3>
+          <p>Traccia i tuoi livelli di energia, focus e connessione con il team</p>
+          <ul class="feature-list">
+            <li>Energy Level (1-10)</li>
+            <li>Focus Level (1-10)</li>
+            <li>Team Connection (1-10)</li>
+          </ul>
+        </div>
 
-<hr />
+        <div class="feature-card">
+          <div class="feature-icon">3</div>
+          <h3>Analisi Settimanale</h3>
+          <p>Riflessioni approfondite per consolidare l'apprendimento della settimana</p>
+          <ul class="feature-list">
+            <li>Achievements</li>
+            <li>Challenges</li>
+            <li>Lessons Learned</li>
+          </ul>
+        </div>
 
-<h2>Contratti caricati</h2>
-<table>
-  <thead>
-    <tr>
-      <th>File</th>
-      <th>Tipo</th>
-      <th>Stato</th>
-      <th>Data upload</th>
-      <th>Importo</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let c of contracts">
-      <td>{{ c.fileName }}</td>
-      <td>{{ c.contractType }}</td>
-      <td>{{ c.status }}</td>
-      <td>{{ c.uploadDate | date:'short' }}</td>
-      <td>{{ c.totalAmount || '-' }}</td>
-    </tr>
-  </tbody>
-</table>
+        <div class="feature-card">
+          <div class="feature-icon">4</div>
+          <h3>Progress Tracking</h3>
+          <p>Dashboard visive per monitorare il tuo sviluppo nel tempo</p>
+          <ul class="feature-list">
+            <li>Trend mensili</li>
+            <li>Comparazioni</li>
+            <li>Insights personalizzati</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="benefits-section">
+      <div class="benefits-container">
+        <div class="benefits-content">
+          <h2>Perché i leader scelgono Daily Pulse</h2>
+          <div class="benefits-list">
+            <div class="benefit-item">
+              <span class="benefit-icon">⚡</span>
+              <div>
+                <h4>Consapevolezza Istantanea</h4>
+                <p>Riflessioni quotidiane che aumentano la self-awareness leadership</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-icon">📈</span>
+              <div>
+                <h4>Crescita Misurabile</h4>
+                <p>Metriche concrete per tracciare il tuo sviluppo professionale</p>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <span class="benefit-icon">🎯</span>
+              <div>
+                <h4>Focus Strategico</h4>
+                <p>Priorità chiare per lo sviluppo delle tue competenze leadership</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="benefits-visual">
+          <div class="visual-card">
+            <div class="visual-header">
+              <div class="visual-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <div class="visual-content">
+              <div class="metric-line">
+                <span>Self-Awareness</span>
+                <div class="metric-bar"><div class="metric-fill" style="width: 85%"></div></div>
+                <span>+32%</span>
+              </div>
+              <div class="metric-line">
+                <span>Team Leadership</span>
+                <div class="metric-bar"><div class="metric-fill" style="width: 78%"></div></div>
+                <span>+28%</span>
+              </div>
+              <div class="metric-line">
+                <span>Strategic Focus</span>
+                <div class="metric-bar"><div class="metric-fill" style="width: 91%"></div></div>
+                <span>+45%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="testimonials-section">
+      <div class="section-header">
+        <h2>Cosa dicono i nostri leader</h2>
+        <p>Esperienze reali di crescita e trasformazione</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            "Daily Pulse ha trasformato il mio approccio alla leadership. 5 minuti che valgono ore di riflessione."
+          </div>
+          <div class="testimonial-author">
+            <strong>Marco Rossi</strong>
+            <span>Head of Product</span>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            "Finalmente uno strumento pratico per misurare la mia crescita come leader. I dati parlano chiaro!"
+          </div>
+          <div class="testimonial-author">
+            <strong>Laura Bianchi</strong>
+            <span>CTO</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-card">
+        <h2>Pronto a trasformare la tua leadership?</h2>
+        <p>Unisciti a migliaia di leader che già utilizzano Daily Pulse</p>
+        
+        <div class="login-card">
+          <h3>Accedi al tuo account</h3>
+          <form  #authForm="ngForm" novalidate class="login-form">
+            <div class="form-group"  [ngClass]="{ 'invalid': authForm.submitted && !authForm.controls['email']?.valid }">
+              <label for="email">Email professionale</label>
+              <input type="email"
+                [(ngModel)]="email"
+                name="email"
+                placeholder="nome.cognome@azienda.com" 
+                required>
+            </div>
+            <div class="form-group"  [ngClass]="{ 'invalid': authForm.submitted && !authForm.controls['password']?.valid }">
+              <label for="password">Password</label>
+              <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="Inserisci la tua password" required>
+            </div>
+          <div class="buttons">
+        <button type="button" (click)="login()" [disabled]="!authForm.valid">Login</button>
+        <button type="button" (click)="signup()" [disabled]="!authForm.valid">Registrati</button>
+      </div>
+          </form>
+          <div class="login-footer">
+            <p>Nuovo su Leadership Pulse? <a href="#" class="register-link">Crea un account</a></p>
+            <a href="#" class="forgot-link">Password dimenticata?</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="logo">🎯</div>
+        <span class="brand-text">Daily Leadership Pulse</span>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Terms of Service</a>
+        <a href="#" class="footer-link">Support</a>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      © 2024 Daily Leadership Pulse. Tutti i diritti riservati.
+    </div>
+  </footer>
+</div>
