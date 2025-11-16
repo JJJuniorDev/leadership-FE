@@ -4,14 +4,16 @@ import { DailyPulseDTO } from "../model/DailyPulseDTO.model";
 import { WeeklyReflectionDTO } from "../model/WeeklyReflectionDTO.model";
 import { LeadershipGoalDTO } from "../model/LeadershipGoalDTO.model";
 import { ImprovementAreaDTO } from "../model/ImprovementAreaDTO.model";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { environment } from "../environments/environment";
 
 // user.service.ts
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
+ private baseUrl = `${environment.apiUrl}`;
 
     constructor(private http: HttpClient) {}
   // Carica solo dati base utente
@@ -26,14 +28,20 @@ export class UserService {
   }
 
   getActiveLeadershipGoals(userId: string): Observable<LeadershipGoalDTO[]> {
-    return this.http.get<LeadershipGoalDTO[]>(
-      `/api/users/${userId}/leadership-goals/active`
-    );
+     const headers = new HttpHeaders({
+    'X-User-ID': userId,
+    'Content-Type': 'application/json'
+  });
+  
+  return this.http.get<LeadershipGoalDTO[]>(
+    `${this.baseUrl}/leadership-goals/active`,
+    { headers }
+  );
   }
 
   getActiveImprovementAreas(userId: string): Observable<ImprovementAreaDTO[]> {
     return this.http.get<ImprovementAreaDTO[]>(
-      `/api/users/${userId}/improvement-areas/active`
+      `${this.baseUrl}/users/${userId}/improvement-areas/active`
     );
   }
 }

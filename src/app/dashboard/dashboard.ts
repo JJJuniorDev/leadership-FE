@@ -10,11 +10,13 @@ import { ImprovementAreaDTO } from '../model/ImprovementAreaDTO.model';
 import { User } from '../model/User.model';
 import { DailyPulseService } from '../services/DailyPulse.service';
 import { UserService } from '../services/User.service';
-
+import { GoalRelatedTaskDTO } from '../model/Goal-tasks/GoalRelatedTaskDTO.model';
+import { LeadershipGoalService } from '../services/LeadershipGoalService.service';
+import { DailyTaskComponent } from '../daily-task-component/daily-task-component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, DailyTaskComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -43,11 +45,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     weeklyScore: 0
   };
 
+  
+   selectedGoal: LeadershipGoalDTO | null = null;
+   todaysTask: GoalRelatedTaskDTO | null = null;
+ taskLoading: boolean = false;
+showTaskModal: boolean = false;
+
   constructor(
     private userStateService: UserStateService,
     private dailyPulseService: DailyPulseService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private leadershipGoalService: LeadershipGoalService
   ) {}
 
   ngOnInit(): void {
@@ -87,15 +96,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Carica tutto in parallelo per performance migliore
     forkJoin({
       pulses: this.dailyPulseService.getRandomPulsesForUser(this.user.id),
-      goals: this.userService.getActiveLeadershipGoals(this.user.id),
-      improvements: this.userService.getActiveImprovementAreas(this.user.id),
-      reflections: this.userService.getRecentWeeklyReflections(this.user.id, 3)
+      activeGoals: this.userService.getActiveLeadershipGoals(this.user.id),
+    //  improvements: this.userService.getActiveImprovementAreas(this.user.id),
+    //  reflections: this.userService.getRecentWeeklyReflections(this.user.id, 3)
     }).subscribe({
       next: (results) => {
         this.recentPulses = results.pulses;
-        this.activeGoals = results.goals;
-        this.activeImprovements = results.improvements;
-        this.recentReflections = results.reflections;
+        this.activeGoals = results.activeGoals;
+      //  this.activeImprovements = results.improvements;
+      //  this.recentReflections = results.reflections;
         
         this.calculateStats();
         this.loading.all = false;
@@ -123,6 +132,51 @@ export class DashboardComponent implements OnInit, OnDestroy {
          lastReflection.workLifeBalanceScore) / 4
       );
     }
+  }
+
+    // Aggiungi questi metodi
+  getDailyTask(goal: LeadershipGoalDTO) {
+    this.selectedGoal = goal;
+    this.taskLoading = true;
+    this.showTaskModal = true;
+    
+    this.leadershipGoalService.getTodaysTask(goal.id, this.user!.id)
+      .subscribe({
+        next: (task) => {
+          this.todaysTask = task;
+          this.taskLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading today\'s task:', error);
+          this.taskLoading = false;
+          // Mostra stato di errore nel modal
+        }
+      });
+  }
+
+  completeTask(taskId: string) {
+    this.leadershipGoalService.completeTask(taskId, this.user!.id)
+      .subscribe({
+        next: () => {
+          this.showTaskModal = false;
+          this.todaysTask = null;
+          this.selectedGoal = null;
+          this.refreshData(); // Ricarica i dati per aggiornare il progresso
+        },
+        error: (error) => {
+          console.error('Error completing task:', error);
+        }
+      });
+  }
+
+  closeTaskModal() {
+    this.showTaskModal = false;
+    this.todaysTask = null;
+    this.selectedGoal = null;
+  }
+
+  getCurrentDay(): number {
+    return this.selectedGoal?.currentDay || 1;
   }
 
   private handleNoUser(): void {

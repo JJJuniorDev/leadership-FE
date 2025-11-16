@@ -1,0 +1,87 @@
+<p>daily-task-component works!</p>
+<div class="modal-overlay" *ngIf="isVisible" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="header-title">
+        <h2>🎯 Task del Giorno</h2>
+        <span class="day-badge">Giorno {{ currentDay }}/90</span>
+      </div>
+      <button class="close-btn" (click)="close()" aria-label="Chiudi">
+        <span>×</span>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="loading-spinner"></div>
+      <p>Caricamento task del giorno...</p>
+    </div>
+
+    <!-- Task Content -->
+    <div class="task-content" *ngIf="task && !isLoading">
+      
+      <!-- Task Header -->
+      <div class="task-header">
+        <h3 class="task-title">{{ task!.title }}</h3>
+        <div class="task-meta">
+          <span class="task-phase">{{ getPhaseText() }}</span>
+          <span class="task-points">⭐ {{ task!.points }} punti</span>
+        </div>
+      </div>
+
+      <!-- Task Description -->
+      <div class="task-description-section">
+        <p class="task-description">{{ task!.description }}</p>
+      </div>
+
+      <!-- Task Details -->
+      <div class="task-details-grid">
+        <div class="detail-item">
+          <span class="detail-icon">⏱️</span>
+          <div class="detail-content">
+            <span class="detail-label">Tempo stimato</span>
+            <span class="detail-value">{{ task!.estimatedMinutes }} minuti</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-icon">🎯</span>
+          <div class="detail-content">
+            <span class="detail-label">Competenza</span>
+            <span class="detail-value">{{ getSkillDisplayName(task!.relatedSkill) }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span class="detail-icon">📅</span>
+          <div class="detail-content">
+            <span class="detail-label">Scadenza</span>
+            <span class="detail-value">{{ task!.dueDate | date:'d MMMM y' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="close()">
+          <span>💾 Salva per dopo</span>
+        </button>
+        <button class="btn-primary" (click)="completeTask()">
+          <span>✅ Task Completata</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- No Task State -->
+    <div class="empty-state" *ngIf="!task && !isLoading">
+      <div class="empty-icon">📝</div>
+      <h3>Nessuna task per oggi</h3>
+      <p>Hai completato tutte le task disponibili o non ci sono task assegnate.</p>
+      <button class="btn-primary" (click)="close()">Chiudi</button>
+    </div>
+
+  </div>
+</div>

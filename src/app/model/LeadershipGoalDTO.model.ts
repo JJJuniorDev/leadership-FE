@@ -12,4 +12,5 @@ export interface LeadershipGoalDTO {
   progressNotes: string;
   createdAt: string;
   updatedAt: string;
+  currentDay: number;
 }

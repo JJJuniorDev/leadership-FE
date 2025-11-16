@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LeadershipGoalDTO } from '../model/LeadershipGoalDTO.model';
+import { GoalRelatedTaskDTO } from '../model/Goal-tasks/GoalRelatedTaskDTO.model';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +46,22 @@ export class LeadershipGoalService {
     return this.http.delete<void>(`${this.apiUrl}/${goalId}`, {
       headers: { 'X-User-ID': userId }
     });
+  }
+
+  
+  // Ottieni la task del giorno per un goal specifico
+  getTodaysTask(goalId: string, userId: string): Observable<GoalRelatedTaskDTO> {
+    return this.http.get<GoalRelatedTaskDTO>(
+      `${this.apiUrl}/${goalId}/todays-task`,
+      { headers: { 'X-User-ID': userId } }
+    );
+  }
+
+    completeTask(taskId: string, userId: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/tasks/${taskId}/complete`,
+      {},
+      { headers: { 'X-User-ID': userId } }
+    );
   }
 }

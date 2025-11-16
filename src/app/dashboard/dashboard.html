@@ -142,6 +142,10 @@
             </div>
             <div class="goal-dates">
               <span>Scadenza: {{ goal.targetDate | date:'d MMM y' }}</span>
+              <span class="day-info">Giorno {{ goal.currentDay || 1 }}/90</span>
+              <button class="btn-task" (click)="getDailyTask(goal)">
+    🎯 Task del Giorno
+  </button>
             </div>
           </div>
         </div>
@@ -267,3 +271,12 @@
     </div>
   </div>
 </ng-template>
+
+<app-daily-task-component
+  [isVisible]="showTaskModal"
+  [task]="todaysTask"
+  [isLoading]="taskLoading"
+  [currentDay]="getCurrentDay()"
+  (closed)="closeTaskModal()"
+  (taskCompleted)="completeTask($event)">
+</app-daily-task-component>
